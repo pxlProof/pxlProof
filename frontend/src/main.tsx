@@ -11,7 +11,8 @@ import "@rainbow-me/rainbowkit/styles.css";
 
 const config = getDefaultConfig({
   appName: "Image detection",
-  projectId: import.meta.env.VITE_PROJECT_ID,
+  // projectId: import.meta.env.VITE_PROJECT_ID,
+  projectId: "diesdas",
   chains: [mainnet, base],
   ssr: false,
 });
