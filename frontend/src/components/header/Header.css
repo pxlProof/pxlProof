@@ -10,7 +10,7 @@
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -36,10 +36,21 @@
 
 @media (max-width: 768px) {
   .header-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 
   .logo-section h1 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+  }
+
+  .wallet-section {
+    scale: 0.9;
+    transform-origin: right;
+  }
+}
+
+@media (max-width: 480px) {
+  .wallet-section {
+    scale: 0.8;
   }
 }
