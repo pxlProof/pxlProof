@@ -55,7 +55,7 @@ export default function Home() {
       return;
     }
 
-    if (!address) {
+    if (selectedFeature === "publish" && !address) {
       setError("Please connect your wallet first");
       return;
     }
@@ -71,15 +71,17 @@ export default function Home() {
           break;
         case "verify":
           console.log("Verifying on blockchain:", selectedImage);
-          console.log("Connected wallet address:", address);
           break;
         case "check":
           console.log("Validating image:", selectedImage);
-          console.log("Connected wallet address:", address);
           break;
       }
 
-      setStatus(`Success! Connected address: ${address}`);
+      setStatus(
+        selectedFeature === "publish"
+          ? `Success! Connected address: ${address}`
+          : "Success!"
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -130,15 +132,24 @@ export default function Home() {
         </div>
 
         <button
-          className="upload-button"
+          className={`upload-button ${
+            selectedFeature === "publish" && !address ? "wallet-required" : ""
+          }`}
           onClick={handleUpload}
           disabled={!selectedImage}
         >
-          {selectedFeature === "publish"
-            ? "Publish"
-            : selectedFeature === "verify"
-            ? "Verify"
-            : "Validate"}
+          {selectedFeature === "publish" ? (
+            <div className="button-content">
+              <span>Publish</span>
+              {!address && (
+                <span className="wallet-notice">Connect wallet required</span>
+              )}
+            </div>
+          ) : selectedFeature === "verify" ? (
+            "Verify"
+          ) : (
+            "Validate"
+          )}
         </button>
 
         {status && <div className="status-message">{status}</div>}
