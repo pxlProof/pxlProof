@@ -1,0 +1,138 @@
+.home-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+h1 {
+  color: #e1e1e1;
+  margin-bottom: 0.5rem;
+  font-size: 2.5em;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #a1a1a1;
+  margin-bottom: 2rem;
+}
+
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.feature-option {
+  background-color: #262830;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #363842;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.feature-option:hover {
+  border-color: #64ffda;
+  transform: translateY(-2px);
+}
+
+.feature-option.selected {
+  border-color: #64ffda;
+  background-color: rgba(100, 255, 218, 0.1);
+}
+
+.feature-option h3 {
+  color: #e1e1e1;
+  margin-bottom: 0.5rem;
+}
+
+.feature-option p {
+  color: #a1a1a1;
+  font-size: 0.9em;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: #262830;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #363842;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.drop-zone {
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+  border: 2px dashed #464953;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 1rem;
+  background-color: #1a1b1e;
+}
+
+.drop-zone:hover {
+  border-color: #64ffda;
+  background-color: rgba(100, 255, 218, 0.05);
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #64ffda;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.upload-button {
+  padding: 0.8rem 2rem;
+  background-color: #64ffda;
+  color: #1a1b1e;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 200px;
+}
+
+.upload-button:hover {
+  background-color: #76ffdf;
+  transform: translateY(-2px);
+}
+
+.upload-button:disabled {
+  background-color: #464953;
+  color: #a1a1a1;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status-message {
+  color: #64ffda;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.error-message {
+  color: #ff6464;
+  margin-top: 1rem;
+  font-weight: 500;
+}
