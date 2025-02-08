@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Home.css";
+import { useAccount } from "wagmi";
 
 type FeatureType = "publish" | "verify" | "check";
 
@@ -29,6 +30,7 @@ const features: Feature[] = [
 ];
 
 export default function Home() {
+  const { address } = useAccount();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] =
@@ -53,27 +55,31 @@ export default function Home() {
       return;
     }
 
+    if (!address) {
+      setError("Please connect your wallet first");
+      return;
+    }
+
     setStatus("Processing...");
     setError("");
 
     try {
-      // TODO: Implement API calls based on selectedFeature
       switch (selectedFeature) {
         case "publish":
-          // Implement blockchain publishing
           console.log("Publishing to blockchain:", selectedImage);
+          console.log("Connected wallet address:", address);
           break;
         case "verify":
-          // Implement blockchain verification
           console.log("Verifying on blockchain:", selectedImage);
+          console.log("Connected wallet address:", address);
           break;
         case "check":
-          // Implement image validation
           console.log("Validating image:", selectedImage);
+          console.log("Connected wallet address:", address);
           break;
       }
 
-      setStatus("Success!");
+      setStatus(`Success! Connected address: ${address}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
