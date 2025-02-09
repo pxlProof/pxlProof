@@ -28,6 +28,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: linear-gradient(145deg, #1a1b1e 0%, #262830 100%);
+  overflow-x: hidden;
 }
 
 h1 {
@@ -69,5 +70,15 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 0.5em 1em;
   }
 }

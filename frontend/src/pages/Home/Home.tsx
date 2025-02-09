@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Home.css";
+import { useAccount } from "wagmi";
 
 type FeatureType = "publish" | "verify" | "check";
 
@@ -29,6 +30,7 @@ const features: Feature[] = [
 ];
 
 export default function Home() {
+  const { address } = useAccount();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] =
@@ -53,27 +55,33 @@ export default function Home() {
       return;
     }
 
+    if (selectedFeature === "publish" && !address) {
+      setError("Please connect your wallet first");
+      return;
+    }
+
     setStatus("Processing...");
     setError("");
 
     try {
-      // TODO: Implement API calls based on selectedFeature
       switch (selectedFeature) {
         case "publish":
-          // Implement blockchain publishing
           console.log("Publishing to blockchain:", selectedImage);
+          console.log("Connected wallet address:", address);
           break;
         case "verify":
-          // Implement blockchain verification
           console.log("Verifying on blockchain:", selectedImage);
           break;
         case "check":
-          // Implement image validation
           console.log("Validating image:", selectedImage);
           break;
       }
 
-      setStatus("Success!");
+      setStatus(
+        selectedFeature === "publish"
+          ? `Success! Connected address: ${address}`
+          : "Success!"
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -111,7 +119,7 @@ export default function Home() {
           ) : (
             <>
               <i className="upload-icon">📁</i>
-              <p>Click or drag and drop your image here</p>
+              <p>Click to add your image here</p>
             </>
           )}
           <input
@@ -124,15 +132,24 @@ export default function Home() {
         </div>
 
         <button
-          className="upload-button"
+          className={`upload-button ${
+            selectedFeature === "publish" && !address ? "wallet-required" : ""
+          }`}
           onClick={handleUpload}
           disabled={!selectedImage}
         >
-          {selectedFeature === "publish"
-            ? "Publish"
-            : selectedFeature === "verify"
-            ? "Verify"
-            : "Validate"}
+          {selectedFeature === "publish" ? (
+            <div className="button-content">
+              <span>Publish</span>
+              {!address && (
+                <span className="wallet-notice">Connect wallet required</span>
+              )}
+            </div>
+          ) : selectedFeature === "verify" ? (
+            "Verify"
+          ) : (
+            "Validate"
+          )}
         </button>
 
         {status && <div className="status-message">{status}</div>}

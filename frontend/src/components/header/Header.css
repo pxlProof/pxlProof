@@ -1,0 +1,56 @@
+.header {
+  background-color: rgba(26, 27, 30, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #363842;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-section h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #64ffda;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.wallet-section {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0.75rem;
+  }
+
+  .logo-section h1 {
+    font-size: 1.1rem;
+  }
+
+  .wallet-section {
+    scale: 0.9;
+    transform-origin: right;
+  }
+}
+
+@media (max-width: 480px) {
+  .wallet-section {
+    scale: 0.8;
+  }
+}
