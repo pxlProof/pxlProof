@@ -104,10 +104,17 @@ sudo apt update && sudo apt install -y \
     git \
     libssl-dev
 '''
+
+# sudo apt update
+# sudo apt install libgl1-mesa-glx
+
 # pip install --upgrade pip
 # pip install numpy
 # pip install scipy
 # pip install pillow
+# pip install opencv-python
+# pip install imagehash
+# pip install scikit-image
 
 
 # git clone https://github.com/Zokrates/ZoKrates.git
