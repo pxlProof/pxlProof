@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      no_cache: true
+    ports:
+      - "18012:18012"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
