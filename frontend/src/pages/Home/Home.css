@@ -147,6 +147,7 @@ h1 {
   color: #a1a1a1;
   cursor: not-allowed;
   transform: none;
+  opacity: 0.7;
 }
 
 .upload-button.wallet-required {
@@ -171,12 +172,16 @@ h1 {
   color: #64ffda;
   margin-top: 1rem;
   font-weight: 500;
+  min-height: 24px;
+  transition: all 0.3s ease;
 }
 
 .error-message {
   color: #ff6464;
   margin-top: 1rem;
   font-weight: 500;
+  min-height: 24px;
+  transition: all 0.3s ease;
 }
 
 @media (max-width: 768px) {

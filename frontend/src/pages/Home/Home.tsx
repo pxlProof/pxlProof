@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Home.css";
 import { useAccount } from "wagmi";
+import { uploadImage } from "../../services/api";
 
 type FeatureType = "publish" | "verify" | "check";
 
@@ -37,6 +38,7 @@ export default function Home() {
     useState<FeatureType>("publish");
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -60,30 +62,31 @@ export default function Home() {
       return;
     }
 
-    setStatus("Processing...");
+    setIsLoading(true);
+    setStatus("");
     setError("");
 
     try {
-      switch (selectedFeature) {
-        case "publish":
-          console.log("Publishing to blockchain:", selectedImage);
-          console.log("Connected wallet address:", address);
-          break;
-        case "verify":
-          console.log("Verifying on blockchain:", selectedImage);
-          break;
-        case "check":
-          console.log("Validating image:", selectedImage);
-          break;
-      }
+      const response = await uploadImage(selectedFeature, selectedImage);
+      console.log(`${selectedFeature} response:`, response);
 
-      setStatus(
-        selectedFeature === "publish"
-          ? `Success! Connected address: ${address}`
-          : "Success!"
-      );
+      if (response.success) {
+        setError("");
+        setStatus(response.message || "Successfully published!");
+      } else {
+        setStatus("");
+        setError(response.message || "Operation failed");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      console.error("Upload error:", err);
+      setStatus("");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred during processing"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,7 +122,7 @@ export default function Home() {
           ) : (
             <>
               <i className="upload-icon">📁</i>
-              <p>Click to add your image here</p>
+              <p>Click to add your image here :)</p>
             </>
           )}
           <input
@@ -136,9 +139,13 @@ export default function Home() {
             selectedFeature === "publish" && !address ? "wallet-required" : ""
           }`}
           onClick={handleUpload}
-          disabled={!selectedImage}
+          disabled={!selectedImage || isLoading}
         >
-          {selectedFeature === "publish" ? (
+          {isLoading ? (
+            <div className="button-content">
+              <span>Processing...</span>
+            </div>
+          ) : selectedFeature === "publish" ? (
             <div className="button-content">
               <span>Publish</span>
               {!address && (
