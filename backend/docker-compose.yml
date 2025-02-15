@@ -1,7 +1,9 @@
 version: '3.8'
 services:
   app:
-    build: .
+    build:
+      context: .
+      no_cache: true
     ports:
       - "8000:8000"
     volumes:
