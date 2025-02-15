@@ -5,7 +5,7 @@ services:
       context: .
       no_cache: true
     ports:
-      - "8012:8012"
+      - "18012:18012"
     volumes:
       - .:/app
     environment:
