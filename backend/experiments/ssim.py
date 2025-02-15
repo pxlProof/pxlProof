@@ -68,6 +68,10 @@ num_matches = feature_matching(
 print(f"Feature Matches Found: {num_matches}")
 print("--------------------------------------------------------------")
 num_matches = feature_matching(
+    "test_image.jpeg", "test_image_r4.jpeg", method="SIFT")
+print(f"Feature Matches Found: {num_matches}")
+print("--------------------------------------------------------------")
+num_matches = feature_matching(
     "test_image.jpeg", "test_image_2.jpeg", method="SIFT")
 print(f"Feature Matches Found: {num_matches}")
 print("--------------------------------------------------------------")
