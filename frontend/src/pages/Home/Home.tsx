@@ -119,7 +119,7 @@ export default function Home() {
           ) : (
             <>
               <i className="upload-icon">📁</i>
-              <p>Click to add your image here</p>
+              <p>Click to add your image here :)</p>
             </>
           )}
           <input
