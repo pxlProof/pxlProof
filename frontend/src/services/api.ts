@@ -4,7 +4,7 @@ interface ApiResponse {
   data?: any;
 }
 
-const API_BASE_URL = "http://132.226.200.0:18012/api";
+const API_BASE_URL = "https://pxlproof.ashwinshome.co.uk/api";
 
 export const uploadImage = async (
   endpoint: "publish" | "verify" | "check",
