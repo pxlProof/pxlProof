@@ -12,5 +12,5 @@ dependencies = [
     "python-jose[cryptography]>=3.3.0",
     "pydantic>=2.5.0",
     "aiofiles>=23.2.1",
-    "ImageHash>=4.3.2"
+    "imagehash>=4.3.2",
 ]
