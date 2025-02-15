@@ -2,12 +2,13 @@ from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import io
-import hashlib
+import csv
 import json
 import imagehash
 from typing import Dict
 from pydantic import BaseModel
 
+db_name = 'db'
 app = FastAPI(title="Attested Image-Editing Stack API")
 
 # Add CORS middleware
@@ -52,10 +53,10 @@ def calculate_image_hash(image_data: bytes, hash_size=16) -> str:
     This function is useful for image comparison, deduplication, or generating unique identifiers for images.
     """
     image = Image.open(io.BytesIO(image_data))
-    ahash = imagehash.ahash(image, hash_size)
+    ahash = imagehash.average_hash(image, hash_size)
     dhash = imagehash.dhash(image, hash_size)
     phash = imagehash.phash(image, hash_size)
-    return (ahash + "#" + dhash + "#" + phash)
+    return (str(ahash) + "#" + str(dhash) + "#" + str(phash))
 
 
 def calculate_similarity(hash1, hash2) -> int:
@@ -76,6 +77,9 @@ def calculate_similarity(hash1, hash2) -> int:
 
     A higher similarity percentage indicates that the two images are visually more similar, while a lower percentage indicates greater differences.
     """
+    hash1 = imagehash.hex_to_hash(hash1)
+    hash2 = imagehash.hex_to_hash(hash2)
+
     # Compute Hamming Distance
     hamming_dist = hash1 - hash2
     # Total number of bits in the hash (hash_size * hash_size)
@@ -142,21 +146,30 @@ def calculate_similaties(hash_1: str, hash_2: str) -> dict:
     return {'ahash_similarity': ahash_similarity, 'dhash_similarity': dhash_similarity, 'phash_similarity': phash_similarity, 'avg_similarity': avg_similarity}
 
 
-'''
+def read_image_hash():
+    hashes = []
+    with open(db_name, 'r') as file:
+        hashes = file.readlines()
+    return hashes
+
+
+def write_image_hash(hash):
+    with open(db_name, mode='a+', newline='\n') as file:
+        file.write(hash + '\n')
+
+
 def search_image(original_image_hash: str) -> bool:
-    # TODO: read from all the images from blockchain
-    images = []
-    for image in images:
-        # TODO: read the content of the current image
-        contents = await image.read()
-        image_hash = calculate_image_hash(contents)
+    image_hashes = read_image_hash()
+    for image_hash in image_hashes:
         similarities = calculate_similaties(original_image_hash, image_hash)
         if similarities['avg_similarity'] > 80.0:
             return True
     return False
-'''
+
 
 '''
+import hashlib
+
 def calculate_image_hash(image_data: bytes) -> str:
     """Calculate SHA-256 hash of image data"""
     return hashlib.sha256(image_data).hexdigest()
@@ -181,7 +194,11 @@ async def publish_image(file: UploadFile):
 
     contents = await file.read()
     image_hash = calculate_image_hash(contents)
+    exists = search_image(image_hash)
+    if not exists:
+        write_image_hash(image_hash)
 
+    '''
     # Store image metadata (replace with blockchain storage)
     image_store[image_hash] = {
         "filename": file.filename,
@@ -189,10 +206,13 @@ async def publish_image(file: UploadFile):
         "size": len(contents),
         "timestamp": "2025-02-08T16:13:44+01:00"  # Use actual blockchain timestamp
     }
+    '''
 
     return ImageResponse(
         message="Image published successfully",
-        hash=image_hash
+        hash=image_hash,
+        exists=exists,
+        validation=exists
     )
 
 
@@ -204,12 +224,13 @@ async def verify_image(file: UploadFile):
 
     contents = await file.read()
     image_hash = calculate_image_hash(contents)
-    exists = image_hash in image_store
+    exists = search_image(image_hash)
 
     return ImageResponse(
         message="Image verification complete",
         hash=image_hash,
-        exists=exists
+        exists=exists,
+        validation=exists
     )
 
 
