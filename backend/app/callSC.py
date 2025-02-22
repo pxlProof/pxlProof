@@ -27,9 +27,15 @@ account = Account.from_key(private_key)
 
 def add_hash(hash_string: str):
     """
-    Add a hash to the smart contract
+    Add a hash to the smart contract if it does not already exist
     """
     try:
+        # Check if the hash already exists
+        existing_hashes = contract.functions.getAllHashes().call()
+        if hash_string in existing_hashes:
+            print(f"Hash '{hash_string}' already exists in contract. Skipping addition.")
+            return None
+
         # Build the transaction
         nonce = w3.eth.get_transaction_count(account.address)
 
