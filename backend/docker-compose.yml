@@ -7,6 +7,9 @@ services:
     ports:
       - "18012:18012"
     volumes:
-      - .:/app
+      - backend_src:/app
     environment:
       - PYTHONUNBUFFERED=1
+
+volumes:
+  backend_src:
