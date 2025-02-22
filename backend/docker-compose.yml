@@ -6,8 +6,6 @@ services:
       no_cache: true
     ports:
       - "18012:18012"
-    volumes:
-      - backend_src:/app
     environment:
       - PYTHONUNBUFFERED=1
 
