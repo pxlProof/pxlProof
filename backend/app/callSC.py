@@ -60,23 +60,22 @@ def add_hash(hash_string: str):
         print(f"Error adding hash: {str(e)}")
         return None
 
-def get_total_hashes():
+def get_all_hashes():
     """
-    Get the total number of hashes stored in the contract
+    Get all the stored hashes from the contract
     """
     try:
-        total = contract.functions.getTotalHashes().call()
-        print(f"Total number of hashes: {total}")
-        return total
+        hashes = contract.functions.getAllHashes().call()
+        print(f"All hashes: {hashes}")
+        return hashes
     except Exception as e:
-        print(f"Error getting total hashes: {str(e)}")
+        print(f"Error getting all hashes: {str(e)}")
         return None
 
 # Example usage
 if __name__ == "__main__":
-    # print("hellos")
     # Example: Add a hash
     add_hash("QmExample123Hash")
 
-    # Get total hashes
-    get_total_hashes()
+    # Get all hashes
+    get_all_hashes()
