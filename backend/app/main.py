@@ -7,6 +7,7 @@ import json
 import imagehash
 from typing import Dict
 from pydantic import BaseModel
+from .callSC import add_hash, get_all_hashes
 
 db_name = 'db'
 app = FastAPI(title="Attested Image-Editing Stack API")
@@ -28,7 +29,7 @@ class ImageResponse(BaseModel):
     message: str
     hash: str | None = None
     exists: bool | None = None
-    validation: dict | None = None
+    validation: bool | None = None
 
 
 def calculate_image_hash(image_data: bytes, hash_size=16) -> str:
@@ -91,19 +92,19 @@ def calculate_similarity(hash1, hash2) -> int:
 
 def calculate_similaties(hash_1: str, hash_2: str) -> dict:
     """
-    Compares two concatenated hash strings (containing three perceptual hashes) 
-    and calculates the similarity for each hash type (average, difference, and perceptual hash) 
+    Compares two concatenated hash strings (containing three perceptual hashes)
+    and calculates the similarity for each hash type (average, difference, and perceptual hash)
     using their Hamming Distance. Returns the average similarity.
 
     Parameters:
-        hash_1 (str): A concatenated string containing three perceptual hashes for the first image, 
+        hash_1 (str): A concatenated string containing three perceptual hashes for the first image,
                       separated by '#'.
-        hash_2 (str): A concatenated string containing three perceptual hashes for the second image, 
+        hash_2 (str): A concatenated string containing three perceptual hashes for the second image,
                       separated by '#'.
 
     Returns:
-        dict: A dictionary containing the individual similarities for each hash type 
-              ('ahash_similarity', 'dhash_similarity', 'phash_similarity'), 
+        dict: A dictionary containing the individual similarities for each hash type
+              ('ahash_similarity', 'dhash_similarity', 'phash_similarity'),
               as well as the 'avg_similarity', which is the average of the three similarity values.
 
     Steps:
@@ -147,15 +148,22 @@ def calculate_similaties(hash_1: str, hash_2: str) -> dict:
 
 
 def read_image_hash():
-    hashes = []
-    with open(db_name, 'r') as file:
-        hashes = file.readlines()
+    """Read all image hashes from the blockchain."""
+    hashes = get_all_hashes()
+
     return hashes
+    # hashes = []
+    # with open(db_name, 'r') as file:
+    #     hashes = file.readlines()
+    # return hashes
 
 
 def write_image_hash(hash):
-    with open(db_name, mode='a+', newline='\n') as file:
-        file.write(hash + '\n')
+
+    """Append an image hash to the blockchain."""
+    add_hash(hash)
+    # with open(db_name, mode='a+', newline='\n') as file:
+    #     file.write(hash + '\n')
 
 
 def search_image(original_image_hash: str) -> bool:
@@ -193,6 +201,7 @@ async def publish_image(file: UploadFile):
         raise HTTPException(status_code=400, detail="File must be an image")
 
     contents = await file.read()
+    print(read_image_hash())
     image_hash = calculate_image_hash(contents)
     exists = search_image(image_hash)
     if not exists:
@@ -225,6 +234,8 @@ async def verify_image(file: UploadFile):
     contents = await file.read()
     image_hash = calculate_image_hash(contents)
     exists = search_image(image_hash)
+
+    print(image_hash)
 
     return ImageResponse(
         message="Image verification complete",

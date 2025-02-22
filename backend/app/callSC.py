@@ -13,7 +13,7 @@ if not w3.is_connected():
     exit(1)
 
 # Contract details
-contract_address = '0x2EAA134B34a4a7e043c162acd8E1273d84491472'
+contract_address = '0xE1A5037962a3108bdF6049419b5038b21AE24D85'
 with open('abi.json') as json_file:
     contract_abi = json.load(json_file)
 
@@ -72,7 +72,8 @@ def get_all_hashes():
     """
     try:
         hashes = contract.functions.getAllHashes().call()
-        print(f"All hashes: {hashes}")
+        # print(f"All hashes: {hashes}")
+        assert isinstance(hashes, list)
         return hashes
     except Exception as e:
         print(f"Error getting all hashes: {str(e)}")
@@ -81,7 +82,7 @@ def get_all_hashes():
 # Example usage
 if __name__ == "__main__":
     # Example: Add a hash
-    add_hash("QmExample123Hash")
+    add_hash("QmExample123Hash#QmExample456Hash#QmExample789Hash")
 
     # Get all hashes
     get_all_hashes()
