@@ -48,7 +48,7 @@ def add_hash(hash_string: str):
         # Sign the transaction
         signed_txn = w3.eth.account.sign_transaction(transaction, private_key)
 
-        # Send the transaction using the snake_case attribute
+        # Send the transaction (fix: use snake_case attribute for raw transaction bytes)
         tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
 
         # Wait for transaction receipt
