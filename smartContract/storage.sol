@@ -10,14 +10,8 @@ contract HashStorage {
         owners[msg.sender] = true;
     }
     
-    // Define the struct for our data
-    struct AddressHashPair {
-        address userAddress;
-        string hashString;
-    }
-    
-    // Public array to store the pairs
-    AddressHashPair[] public addressHashPairs;
+    // Array to store hash strings
+    string[] public hashes;
     
     // Modifier to check if sender is an owner
     modifier onlyOwner() {
@@ -37,18 +31,18 @@ contract HashStorage {
         return owners[_address];
     }
     
-    // Function to add new address-hash pair - now any owner can call
-    function addAddressHashPair(address _userAddress, string memory _hashString) public onlyOwner {
-        addressHashPairs.push(AddressHashPair(_userAddress, _hashString));
+    // Function to add new hash
+    function addHash(string memory _hashString) public onlyOwner {
+        hashes.push(_hashString);
     }
     
-    // Function to get the total number of pairs
-    function getTotalPairs() public view returns (uint256) {
-        return addressHashPairs.length;
+    // Function to get the total number of hashes
+    function getTotalHashes() public view returns (uint256) {
+        return hashes.length;
     }
     
-    // Function to get all stored pairs
-    function getAllPairs() public view returns (AddressHashPair[] memory) {
-        return addressHashPairs;
+    // Function to get all stored hashes
+    function getAllHashes() public view returns (string[] memory) {
+        return hashes;
     }
 }
