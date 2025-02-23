@@ -2,6 +2,9 @@ from web3 import Web3
 from eth_account import Account
 import json
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Connect to an Ethereum node (replace with your node URL)
 # For example, Infura endpoint for Ethereum mainnet or testnet
@@ -65,7 +68,7 @@ def get_total_hashes():
     Get the total number of hashes stored in the contract
     """
     try:
-        total = contract.functions.getTotalHashes().call()
+    total = contract.functions.getTotalHashes().call()
         print(f"Total number of hashes: {total}")
         return total
     except Exception as e:
