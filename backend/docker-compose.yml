@@ -13,6 +13,6 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       # Mount the source code for development
-      - ../../:/app2
+      - ../:/app2
 volumes:
   backend_src:
