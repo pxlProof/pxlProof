@@ -78,16 +78,21 @@ def calculate_similarity(hash1, hash2) -> int:
 
     A higher similarity percentage indicates that the two images are visually more similar, while a lower percentage indicates greater differences.
     """
-    hash1 = imagehash.hex_to_hash(hash1)
-    hash2 = imagehash.hex_to_hash(hash2)
+    try:
+        hash1 = imagehash.hex_to_hash(hash1)
+        hash2 = imagehash.hex_to_hash(hash2)
 
-    # Compute Hamming Distance
-    hamming_dist = hash1 - hash2
-    # Total number of bits in the hash (hash_size * hash_size)
-    total_bits = hash1.hash.size
-    # Convert to percentage
-    similarity = (1 - hamming_dist / total_bits) * 100
-    return similarity
+        # Compute Hamming Distance
+        hamming_dist = hash1 - hash2
+        # Total number of bits in the hash (hash_size * hash_size)
+        total_bits = hash1.hash.size
+        # Convert to percentage
+        similarity = (1 - hamming_dist / total_bits) * 100
+        return similarity
+    except ValueError as e:
+        print(f"Error comparing hashes: {e}")
+        # Return 0 similarity for incompatible hash formats
+        raise
 
 
 def calculate_similaties(hash_1: str, hash_2: str) -> dict:
@@ -168,10 +173,18 @@ def write_image_hash(hash):
 
 def search_image(original_image_hash: str) -> bool:
     image_hashes = read_image_hash()
+    if not image_hashes:
+        return False
+
     for image_hash in image_hashes:
-        similarities = calculate_similaties(original_image_hash, image_hash)
-        if similarities['avg_similarity'] > 80.0:
-            return True
+        try:
+            similarities = calculate_similaties(original_image_hash, image_hash)
+            if similarities['avg_similarity'] > 80.0:
+                return True
+        except ValueError:
+            # Skip comparison if the hash format is incompatible
+            print(f"Skipping incompatible hash format: {image_hash}")
+            continue
     return False
 
 
