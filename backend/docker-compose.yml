@@ -4,10 +4,15 @@ services:
     build:
       context: .
       no_cache: true
+      args:
+        # Pass a timestamp to bust cache on each build
+        CACHEBUST: ${CACHEBUST:-timestamp}
     ports:
       - "18012:18012"
     environment:
       - PYTHONUNBUFFERED=1
-
+    volumes:
+      # Mount the source code for development
+      - .:/app2
 volumes:
   backend_src:
