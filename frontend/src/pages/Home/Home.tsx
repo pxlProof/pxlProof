@@ -3,7 +3,7 @@ import "./Home.css";
 import { useAccount } from "wagmi";
 import { uploadImage } from "../../services/api";
 
-type FeatureType = "publish" | "verify" | "check";
+type FeatureType = "publish" | "verify";
 
 interface Feature {
   id: FeatureType;
@@ -23,12 +23,48 @@ const features: Feature[] = [
     title: "Verify on Blockchain",
     description: "Check if your image already exists on the blockchain",
   },
-  {
-    id: "check",
-    title: "Image Validation",
-    description: "Validate image properties and check for tampering",
-  },
 ];
+
+interface PopupProps {
+  isOpen: boolean;
+  message: string;
+  type: "success" | "error";
+  onClose: () => void;
+}
+
+const Popup: React.FC<PopupProps> = ({ isOpen, message, type, onClose }) => {
+  if (!isOpen) return null;
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div className="popup-overlay" onClick={handleOverlayClick}>
+      <div className={`popup-content ${type}`}>
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
+        <div className="popup-message">
+          {type === "success" ? "✅" : "❌"} {message}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LoadingOverlay: React.FC = () => {
+  return (
+    <div className="loading-overlay">
+      <div className="loading-content">
+        <div className="loading-spinner"></div>
+        <p className="loading-text">Processing your image...</p>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const { address } = useAccount();
@@ -39,10 +75,19 @@ export default function Home() {
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [popupType, setPopupType] = useState<"success" | "error">("success");
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Only JPG, JPEG and PNG files are allowed");
+        return;
+      }
+
       setSelectedImage(file);
       const imageUrl = URL.createObjectURL(file);
       setPreviewUrl(imageUrl);
@@ -70,12 +115,35 @@ export default function Home() {
       const response = await uploadImage(selectedFeature, selectedImage);
       console.log(`${selectedFeature} response:`, response);
 
-      if (response.success) {
-        setError("");
-        setStatus(response.message || "Successfully published!");
-      } else {
-        setStatus("");
-        setError(response.message || "Operation failed");
+      if (selectedFeature === "verify") {
+        if (response.exists === false) {
+          setError("");
+          setStatus("Image is unique and hasn't been published before!");
+          showNotification(true);
+        } else {
+          setStatus("");
+          setError(
+            "Similar or identical image already exists on the blockchain"
+          );
+          showNotification(false);
+        }
+      } else if (selectedFeature === "publish") {
+        if (
+          response.message === "Image published successfully" &&
+          !response.exists
+        ) {
+          setError("");
+          setStatus("Successfully published to blockchain!");
+          showNotification(true);
+        } else {
+          setStatus("");
+          setError(
+            response.exists
+              ? "Similar or identical image already exists on the blockchain"
+              : response.message || "Failed to publish to blockchain"
+          );
+          showNotification(false);
+        }
       }
     } catch (err) {
       console.error("Upload error:", err);
@@ -85,9 +153,35 @@ export default function Home() {
           ? err.message
           : "An error occurred during processing"
       );
+      showNotification(false);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const showNotification = (success: boolean) => {
+    let message;
+
+    switch (selectedFeature) {
+      case "verify":
+        message = success
+          ? "This image is unique and hasn't been published to the blockchain before!"
+          : "Similar or identical image already exists on the blockchain";
+        break;
+      case "publish":
+        message = success
+          ? "The image was successfully published to the blockchain!"
+          : "Cannot publish: Image already exists on the blockchain";
+        break;
+      default:
+        message = success
+          ? "Operation completed successfully"
+          : "Operation failed";
+    }
+
+    setPopupMessage(message);
+    setPopupType(success ? "success" : "error");
+    setIsPopupOpen(true);
   };
 
   return (
@@ -122,13 +216,13 @@ export default function Home() {
           ) : (
             <>
               <i className="upload-icon">📁</i>
-              <p>Click to add your image here :)</p>
+              <p>Click to add your image here (JPG, JPEG, PNG)</p>
             </>
           )}
           <input
             type="file"
             id="fileInput"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png"
             onChange={handleImageSelect}
             style={{ display: "none" }}
           />
@@ -152,16 +246,23 @@ export default function Home() {
                 <span className="wallet-notice">Connect wallet required</span>
               )}
             </div>
-          ) : selectedFeature === "verify" ? (
-            "Verify"
           ) : (
-            "Validate"
+            "Verify"
           )}
         </button>
 
         {status && <div className="status-message">{status}</div>}
         {error && <div className="error-message">{error}</div>}
       </div>
+
+      {isLoading && <LoadingOverlay />}
+
+      <Popup
+        isOpen={isPopupOpen}
+        message={popupMessage}
+        type={popupType}
+        onClose={() => setIsPopupOpen(false)}
+      />
     </div>
   );
 }

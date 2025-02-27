@@ -1,7 +1,9 @@
 interface ApiResponse {
-  success: boolean;
   message: string;
-  data?: any;
+  hash?: string;
+  success?: boolean;
+  exists?: boolean;
+  validation?: boolean;
 }
 
 const API_BASE_URL = "https://pxlproof.ashwinshome.co.uk/api";

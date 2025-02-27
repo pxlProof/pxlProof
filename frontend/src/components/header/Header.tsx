@@ -6,7 +6,7 @@ export default function Header() {
     <header className="header">
       <div className="header-container">
         <div className="logo-section">
-          <h1>AI Detection</h1>
+          <h1>PxlProof</h1>
         </div>
         <div className="wallet-section">
           <ConnectButton />
