@@ -7,7 +7,7 @@
 pxlProof is a zero-knowledge powered stack for verifying the authenticity and provenance of images in the age of AI-generated content. In a world where deepfakes and manipulated images are increasingly common, pxlProof provides a reliable way to attest to and verify the authenticity of digital images.
 
 **Demo:** [https://pxlproof.netlify.app/](https://pxlproof.netlify.app/)
-
+<small>[DALLE 3]</small>
 
 ## The Problem
 
