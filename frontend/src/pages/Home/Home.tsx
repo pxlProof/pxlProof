@@ -72,7 +72,7 @@ export default function Home() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFeature, setSelectedFeature] =
     useState<FeatureType>("publish");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string | React.ReactNode>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -133,7 +133,22 @@ export default function Home() {
           !response.exists
         ) {
           setError("");
-          setStatus("Successfully published to blockchain!");
+          setStatus(
+            <div className="success-container">
+              <div>Successfully published to blockchain!</div>
+              {response.trx_hash && (
+                <a
+                  href={`https://sepolia.basescan.org/tx/0x${response.trx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transaction-link"
+                >
+                  View Transaction: 0x{response.trx_hash.slice(0, 6)}...
+                  {response.trx_hash.slice(-4)}
+                </a>
+              )}
+            </div>
+          );
           showNotification(true);
         } else {
           setStatus("");
