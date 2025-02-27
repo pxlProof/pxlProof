@@ -30,6 +30,7 @@ class ImageResponse(BaseModel):
     hash: str | None = None
     exists: bool | None = None
     validation: bool | None = None
+    trx_hash: str | None = None
 
 
 def calculate_image_hash(image_data: bytes, hash_size=16) -> str:
@@ -166,7 +167,7 @@ def read_image_hash():
 def write_image_hash(hash):
 
     """Append an image hash to the blockchain."""
-    add_hash(hash)
+    return add_hash(hash)
     # with open(db_name, mode='a+', newline='\n') as file:
     #     file.write(hash + '\n')
 
@@ -218,7 +219,10 @@ async def publish_image(file: UploadFile):
     image_hash = calculate_image_hash(contents)
     exists = search_image(image_hash)
     if not exists:
-        write_image_hash(image_hash)
+        trx_hash = write_image_hash(image_hash)
+    else:
+        trx_hash = None
+
 
     '''
     # Store image metadata (replace with blockchain storage)
@@ -234,7 +238,8 @@ async def publish_image(file: UploadFile):
         message="Image published successfully",
         hash=image_hash,
         exists=exists,
-        validation=exists
+        validation=exists,
+        trx_hash=trx_hash
     )
 
 

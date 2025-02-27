@@ -62,7 +62,7 @@ def add_hash(hash_string: str):
         # Wait for transaction receipt
         tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         print(f"Transaction successful! Transaction hash: {tx_hash.hex()}")
-        return tx_receipt
+        return tx_hash.hex()
 
     except Exception as e:
         print(f"Error adding hash: {str(e)}")
